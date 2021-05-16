@@ -5,11 +5,13 @@ import re
 from datetime import datetime
 from scipy.sparse import load_npz
 from scipy.spatial.distance import cosine
+
+import nltk
+nltk.download('stopwords')
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-nltk.download('stopwords')
 import pickle
 
 ##########################################################################################
