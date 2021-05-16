@@ -9,6 +9,7 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+nltk.download('stopwords')
 import pickle
 
 ##########################################################################################
