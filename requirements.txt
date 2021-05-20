@@ -15,6 +15,7 @@ click==7.1.2
 decorator==5.0.9
 defusedxml==0.7.1
 entrypoints==0.3
+gensim==4.0.1
 gitdb==4.0.7
 GitPython==3.1.17
 idna==2.10
@@ -67,6 +68,7 @@ scipy==1.6.3
 Send2Trash==1.5.0
 six==1.16.0
 sklearn==0.0
+smart-open==5.0.0
 smmap==4.0.0
 streamlit==0.82.0
 terminado==0.9.5
