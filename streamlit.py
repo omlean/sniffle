@@ -18,6 +18,7 @@ import pickle
 
 ##########################################################################################
 
+# @st.cache
 def load_data():
     df = pd.read_csv('data/data_streamlit.csv.gz', index_col=0, sep='\t')
     df.publish_time = pd.to_datetime(df.publish_time)
@@ -116,12 +117,15 @@ def write_results(results_table):
     
 
 # title
-st.title('SNIFFLE')
-st.markdown("""Sniffle is a search engine over the CORD-19 dataset - a collection of scientific literature related to the COVID-19 pandemic available on [Kaggle](https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge).
+st.sidebar.title('SNIFFLE')
+num_top_results = st.sidebar.slider("Number of results", min_value=1, max_value=20, value=10, step=1)
+st.sidebar.markdown("""Welcome to Sniffle &#151; a search engine for scientific literature related to the COVID-19 pandemic. It was created as part of my capstone project for the Data Science bootcamp at [Lighthouse Labs](https://www.lighthouselabs.ca/en/data-science-bootcamp).
 
-This app was created as part of my final project for the Data Science bootcamp at [Lighthouse Labs](https://www.lighthouselabs.ca/en/data-science-bootcamp). See the [repo](https://github.com/omlean/sniffle) on Github.
+This app uses the CORD-19 dataset available on [Kaggle](https://www.kaggle.com/allen-institute-for-ai/CORD-19-research-challenge).
 
-> Note: This version only returns documents published in 2021.
+See the [repo](https://github.com/omlean/sniffle) on Github.
+
+> Note: To focus on the most up-to-date information (and to save search time), this version returns documents dated in 2021.
 """)
 
 # Create a text element and let the reader know the data is loading.
@@ -138,7 +142,6 @@ tdm = load_npz('data/streamlit_tdm.npz') # load term-document matrix
 data_load_state.text('Loading data...done!')
 
 query = st.text_area("Enter search query here:", "Are COVID-19 vaccines safe?")
-num_top_results = st.slider("Number of results", min_value=1, max_value=20, value=5, step=1)
 start_search = st.button("Search")
 
 if start_search:
