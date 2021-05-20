@@ -54,14 +54,14 @@ corpus = MyCorpus(data.cord_uid.tolist(), dictionary=dictionary)
 data_load_state.text('Loading data...done!')
 
 query = st.text_area("Enter search query here:", "Evidence for effectiveness of masks in preventing COVID-19 transmission.")
-search_method = st.selectbox('Select search method', ['TF-IDF','LDA Topics'], index=0)
+search_method = st.selectbox('Select search method', ['TF-IDF','LDA Topics (beta)'], index=0)
 start_search = st.button("Search")
 
 if start_search:
     if search_method == 'TF-IDF':
         results_table = execute_search(query, vectorizer, tdm, index, num_top_results, data)
         write_results(results_table)
-    if search_method == 'LDA Topics':
+    if search_method == 'LDA Topics (beta)':
         results_table = lda_search(query, model, corpus, dictionary, data, num_top_results)
         write_results(results_table)
 

@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+lda_troubleshooting.ipynb
+my_lda.py
+data_access.py

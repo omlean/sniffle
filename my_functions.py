@@ -198,9 +198,3 @@ def lda_search(query, model, corpus, dictionary, reference_df, num_top_results):
     return results_table
             
 ##########################################################################################
-
-# progress = st.progress(0)
-#     for i in range(num_documents):
-#         scores[i] = cosine(v, term_document_matrix[i,:].toarray())
-#         progress.progress(i/num_documents)
-#     progress.progress(100)
