@@ -1,19 +1,19 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-import re
+# import re
 from datetime import datetime
 from scipy.sparse import load_npz
-from scipy.spatial.distance import cosine
+# from scipy.spatial.distance import cosine
 
 import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
-from nltk.stem import PorterStemmer
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
+# from nltk.stem import PorterStemmer
+# from nltk.tokenize import word_tokenize
+# from nltk.corpus import stopwords
+# from nltk.stem import WordNetLemmatizer
 import pickle
 
 from gensim.corpora.dictionary import Dictionary
@@ -47,21 +47,23 @@ tdm = load_npz('data/streamlit_tdm.npz') # load term-document matrix
 # Load LDA objects
 model = LdaModel.load('data/lda_100_0.01_0.1_model')
 dictionary = Dictionary.load('data/dictionary.dict')
-corpus = MyCorpus(data.cord_uid.tolist(), dictionary=dictionary)
+corpus = MyCorpus(data.search_text.tolist(), dictionary=dictionary)
 
 
 # Notify the reader that the data was successfully loaded.
 data_load_state.text('Loading data...done!')
 
 query = st.text_area("Enter search query here:", "Evidence for effectiveness of masks in preventing COVID-19 transmission.")
-search_method = st.selectbox('Select search method', ['TF-IDF','LDA Topics (beta)'], index=0)
+search_method = st.selectbox('Select search method', ['TF-IDF','LDA Topics'], index=0)
 start_search = st.button("Search")
 
 if start_search:
     if search_method == 'TF-IDF':
         results_table = execute_search(query, vectorizer, tdm, index, num_top_results, data)
         write_results(results_table)
-    if search_method == 'LDA Topics (beta)':
-        results_table = lda_search(query, model, corpus, dictionary, data, num_top_results)
+    if search_method == 'LDA Topics':
+        results_table = lda_search(query, dictionary, model, corpus, data, num_top_results=num_top_results)
+#         for i in range(len(results_table)):
+#             print(results_table.iloc[i].title)
         write_results(results_table)
 

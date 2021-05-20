@@ -119,6 +119,7 @@ def write_results(results_table):
 ######################################################################################################
 # LDA functions
 
+
 class MyCorpus():
     
     def __init__(self, search_texts, dictionary=None):
@@ -134,67 +135,19 @@ class MyCorpus():
         for doc in self.docs:
             yield self.dictionary.doc2bow(doc.split())
 
-def clean_text_lda(s, stem=False, lemmatize=True, stopword_list=stopwords.words('english')):
-    s = s.lower() # lowercase
-    s = re.sub(r'[-–]', '', s) # delete hyphens
-    s = re.sub(r'[^a-z|0-9|\s]', '', s) # remove anything that isn't alphanumeric or whitespace
-    s = " ".join([w for w in word_tokenize(s) if w not in stopword_list+['et', 'al']]) # remove stopwords and 'et al'
-    
-    if stem:
-        porter = PorterStemmer()
-        stemmed_words = []
-        for word in word_tokenize(s):
-            stemmed_words.append(porter.stem(word))
-        s = ' '.join(stemmed_words)
-        
-    if lemmatize:
-        lemmatizer = WordNetLemmatizer()
-        lemmatized_words = []
-        for word in word_tokenize(s):
-            lemmatized_words.append(lemmatizer.lemmatize(word, pos='v'))
-        s = ' '.join(lemmatized_words)
-    
-    # Drop numbers, words containing more than 4 digits, or beginning with digits then letters
-
-    s = re.sub(r'\w+\d[a-z]*\d[a-z]*\d[a-z]*\d[a-z]*\d[\d\w]*', '', s)
-    s = re.sub(r' \d+[a-z]+\W*', '', s)
-    s = " ".join(word.strip() for word in s.split())
-    for i in range(10):
-        s = re.sub(r' \d+', ' ', s) # remove numbers
-    s = re.sub(r'  +', ' ', s)
-    
-    return s
-            
-            
-def query_to_topics(query, dictionary, model):
-    """Input: raw string query.
-    Output: Predicted topic distribution of query based on model"""
-    query_clean = clean_text_lda(query)
-    query_vec = dictionary.doc2bow(query_clean.split())
-    query_topics = model[query_vec]
-    return query_topics
-            
-def lda_search(query, model, corpus, dictionary, reference_df, num_top_results):
-    """Input: Search query
-    Output: Results of search: Title, Abstract, Date, Link(s)"""
-    
-    def uid(path):
-        return re.findall(r'(\w+)_clean.txt', path)[0]
-
-    query_vector = query_to_topics(query, dictionary, model) # vectorize query string
-    
+def lda_search(query, dictionary, model, corpus, metadata, num_top_results=5):
+    query = clean_text(query)
+    query_bow = dictionary.doc2bow(query.split())
+    query_vec = model[query_bow]
     distances = []
     progress = st.progress(0)
     n = 0
     for doc in corpus:
-        distances.append(cossim(query_vector, model[doc]))
+        distances.append(cossim(query_vec, model[doc]))
         n += 1
         progress.progress(n/len(corpus))
     distances = np.array(distances)
-    progress.progress(100)    
-    top_indices = np.argsort(distances)[-num_top_results:][::-1] # find n closest documents
-    results_table = reference_df.iloc[top_indices]
-            
-    return results_table
-            
+    top_results = np.argsort(distances)[-num_top_results:][::-1] # find n closest documents
+    results_df = metadata.iloc[top_results]
+    return results_df
 ##########################################################################################
